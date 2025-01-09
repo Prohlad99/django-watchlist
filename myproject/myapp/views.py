@@ -2,7 +2,51 @@ from rest_framework.response import Response
 from rest_framework.decorators import api_view, APIView
 from . import models
 from . import serializers
+from rest_framework import generics, mixins
 
+
+class ReviewCreate(generics.CreateAPIView):
+    serializer_class = serializers.ReviewSerializer
+    def perform_create(self, serializer):
+        pk = self.kwargs['pk']
+        movie = models.WatchList.objects.get(pk=pk)
+        serializer.save(watchlist=movie)
+
+        
+class ReviewList(generics.ListAPIView):
+    # queryset = models.Review.objects.all()
+    serializer_class = serializers.ReviewSerializer
+    def get_queryset(self):
+        pk = self.kwargs['pk']
+        return models.Review.objects.filter(watchlist=pk)
+
+
+class ReviewDetails(generics.RetrieveUpdateDestroyAPIView):
+    queryset = models.Review.objects.all()
+    serializer_class = serializers.ReviewSerializer
+
+# class ReviewDetails(mixins.RetrieveModelMixin, mixins.DestroyModelMixin, mixins.UpdateModelMixin, generics.GenericAPIView):
+#     queryset = models.Review.objects.all()
+#     serializer_class = serializers.ReviewSerializer
+#     def get(self, request, *args, **kwargs):
+#         return self.retrieve(request, *args, **kwargs)
+    
+#     def put(self, request, *args, **kwargs):
+#         return self.update(request, *args, **kwargs)
+    
+#     def delete(self, request, *args, **kwargs):
+#         return self.destroy(request, *args, **kwargs)
+
+
+# class ReviewList(mixins.ListModelMixin, mixins.CreateModelMixin, generics.GenericAPIView):
+#     queryset = models.Review.objects.all()
+#     serializer_class = serializers.ReviewSerializer
+
+#     def get(self, request, *args, **kwargs):
+#         return self.list(request, *args, **kwargs)
+    
+#     def post(self, request, *args, **kwargs):
+#         return self.create(request, *args, **kwargs)
 
 class WatchList(APIView):
     def get(self, request):

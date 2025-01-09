@@ -1,8 +1,18 @@
 from rest_framework import serializers
 from . import models
 
+
+class ReviewSerializer(serializers.ModelSerializer):
+    class Meta:
+        model = models.Review
+        exclude = ('watchlist',)
+        # fields = '__all__'
+
+
+
 class WatchListSerializer(serializers.ModelSerializer):
     # len_name = serializers.SerializerMethodField()
+    reviews = serializers.StringRelatedField(many=True, read_only=True)
     class Meta:
         model = models.WatchList
         fields = '__all__'

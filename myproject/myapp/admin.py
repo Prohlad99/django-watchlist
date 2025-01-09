@@ -4,3 +4,4 @@ from . import models
 # Register your models here.
 admin.site.register(models.WatchList)
 admin.site.register(models.Platform)
+admin.site.register(models.Review)
